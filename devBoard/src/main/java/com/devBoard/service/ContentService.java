@@ -54,22 +54,21 @@ public class ContentService {
 		if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 String fileName = StringUtils.cleanPath(imageFile.getOriginalFilename());
-                String uploadDir = "board-images/" + contents.getContentId(); 
+                String uploadDir = "C:/Dev/workspace/board/devBoard/board-images/" + contents.getContentId();
                 String filePath = Paths.get(uploadDir, fileName).toString();
 
-                // 파일 저장
                 Files.createDirectories(Paths.get(uploadDir));
                 Path targetLocation = Paths.get(filePath);
                 Files.copy(imageFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-                // 이미지 정보 저장
+              
                 BoardImages boardImage = new BoardImages();
                 boardImage.setBoardContents(contents);
                 boardImage.setImageFilename(fileName);
                 boardImage.setImageUploadPath(uploadDir);
 
                 this.imagesRepository.save(boardImage);
-
+            	System.out.println(uploadDir);
+            	
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -100,9 +99,9 @@ public class ContentService {
     }
     
     //検索
-    private Specification<BoardContents> search(String kw, String category) {
+	private Specification<BoardContents> search(String kw, String category) {
     	return new Specification<>() {
-			private static final long searialVersionUID = 1L;
+			private static final long serialVersionUID = 1L;
 			@Override
 			public Predicate toPredicate(Root<BoardContents> board, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				query.distinct(true); 
@@ -146,8 +145,8 @@ public class ContentService {
 	            BoardImages boardImage = new BoardImages();
 	            boardImage.setBoardContents(boardContents);
 	            boardImage.setImageFilename(imageFile.getOriginalFilename());
-	            boardImage.setImageUploadPath(imagePath); // 경로 설정 추가
-
+	            boardImage.setImageUploadPath(imagePath); 
+	            
 	            // 既存のイメージがある場合
 	            boardContents.getImages().clear(); 
 	            boardContents.getImages().add(boardImage);
