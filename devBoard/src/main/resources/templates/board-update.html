@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8">    
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+	    <!-- CSS -->
+	    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+	    
+	    <style type="text/css">
+	        .create-btn {
+	            display: flex;
+	            justify-content: flex-end;
+	            align-items: center;
+	            margin-bottom: 15px;
+	        }
+	        
+	        .create-btn .btn-write {
+	            background-color: #2A7A4B;
+	            color: #FFFFFF;
+	            border: none;
+	            padding: 8px 16px;
+	            border-radius: 4px;
+	        }
+	        
+	        .create-btn .btn-writeC {  
+	            color: #FFFFFF;
+	            border: none;
+	            padding: 8px 16px;
+	            border-radius: 4px;
+	        }
+	        
+	        .readonly-field {
+	            background-color: #f8f9fa;
+	            padding: 6px 12px;
+	            border: 1px solid #ccc;
+	            border-radius: 4px;
+	            line-height: 1.5;
+	        }
+	    </style>
+	    
+	    <title>修正画面</title>
+	</head>
+	
+	<body>
+	    <div class="container my-3 mt-5">
+	        <a href="/list" class="text-dark mb-3" style="text-decoration: none; font-size: 20px;">devBoard</a>
+	    
+	        <h5 class="my-3 border-bottom pb-2 mt-5">修正画面</h5>
+	        <form th:action="@{/contentUpdate/{contentId}(contentId=${formContent.contentId})}" th:object="${formContent}" method="post" enctype="multipart/form-data">
+	        
+	            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+	                <div th:text="項目を入力してください。"></div>
+	            </div>
+	                            
+	            <!-- タイトルForm -->        
+	            <div class="mb-3">
+	                <label for="contentTitle" class="form-label">タイトル</label>
+	                <input type="text" id="contentTitle" th:field="*{contentTitle}" class="form-control"
+	                th:placeholder="タイトル入力">
+	                <div th:if="${#fields.hasErrors('contentTitle')}" class="text-danger">
+	                    <div th:each="err : ${#fields.errors('contentTitle')}" th:text="${err}"></div>
+	                </div>                
+	            </div>
+	            
+	            <!-- 内容Form -->
+	            <div class="mb-3">
+	                <label for="contentContents" class="form-label">内容</label>
+	                <textarea id="contentContents" th:field="*{contentContents}" class="form-control" rows="10"
+	                th:placeholder="内容入力"></textarea>
+	                <div th:if="${#fields.hasErrors('contentContents')}" class="text-danger">
+	                    <div th:each="err : ${#fields.errors('contentContents')}" th:text="${err}"></div>
+	                </div>                
+	            </div>
+	            
+				<!-- 登録者Form -->
+				<div class="mb-3">
+				    <label for="contentUser" class="form-label">登録者</label>
+				    <span id="contentUser" th:text="*{contentUser}" class="readonly-field"></span>
+				    <input type="hidden" th:field="*{contentUser}" />
+				</div>
+	     
+	             <!-- イメージUploadForm -->
+	          	<div class="card mb-1">
+	   				<div class="card-body">
+						<div class="row align-items-center ">
+				   		 <label class="col-form-label col-sm-2">イメージアップロード</label>
+				    		<div class="col-sm-8">
+						        <div class="file-upload-section d-flex align-items-center ">
+						            <!-- File name -->
+						            <span id="fileName" class="file-name" style="margin-right: 10px;">選択されたファイルがありません。</span>
+						            <!-- 選択ボタン -->
+						            <input type="file" id="imageUpload" name="imageFile" accept="image/*" class="form-control d-none">
+						            <button type="button" class="btn btn-file btn-secondary" onclick="document.getElementById('imageUpload').click()">ファイルを選択</button>
+						        </div>
+				    		</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- パスワードForm -->
+	            <div class="mb-3">
+	                <label for="contentPasswd" class="form-label">パスワード</label>
+	                <input type="password" id="contentPasswd" th:field="*{contentPasswd}" class="form-control"
+	                th:placeholder="パスワード入力">
+			        <div th:if="${#fields.hasErrors('contentPasswd')}" class="text-danger">
+			            <div th:each="err : ${#fields.errors('contentPasswd')}" th:text="${err}"></div>
+			        </div>                
+	            </div>
+					            
+				<div class="create-btn d-flex">
+					<input type="submit" value="修正" class="btn btn-write">
+				    <button type="button" class="btn btn-writeC btn-danger" onclick="history.back()"style="margin-left: 10px;
+				    margin-top: 10px;">キャンセル</button>
+				</div>
+	        </form>
+	    </div>
+	    
+	    <!-- Script -->
+	    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+	    <!-- イメージ -->
+	    <script type='text/javascript'>
+	        document.getElementById('imageUpload').addEventListener('change', function() {
+	            const fileName = this.files[0] ? this.files[0].name : '選択されたファイルがありません';
+	            document.getElementById('fileName').textContent = fileName;
+	        });
+	    </script>
+	</body>
+</html>

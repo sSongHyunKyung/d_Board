@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">    
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+	    <!-- CSS -->
+	    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+		<style>
+		    .bg-custom-gray {
+		        background-color: #C0C0C0;
+		    }	    
+		    
+		    .error-message {
+		        font-size: 0.75em;
+		        color: #FF0000; 
+		        margin-top: 5px; 
+		    }	    
+		</style>
+		<title>詳細画面</title>
+	</head>
+
+	<body>
+		<div class="container my-3 mt-5">
+		
+			<a href="/list" class="text-dark mb-3" style="text-decoration: none; font-size: 20px;">devBoard</a>	
+			<!-- タイトル -->
+			<h2 class="border-bottom py-2 text-center mt-5" th:text="${content.contentTitle}"></h2>
+			
+			<!-- 登録者 -->	
+			<div class="d-flex justify-content-end p-2" >
+				<div class="badge bg-light text-dark p-2 text-start">
+			        <div th:text="${content.contentUser}"></div>
+			    </div>
+			</div>		
+			    
+			<!-- 登録日 -->   
+			<div class="d-flex justify-content-end p-2">
+			   <div class="badge bg-light text-dark p-2 text-start">
+			  		<div th:text="${#temporals.format(content.contentAt, 'yyyy-MM-dd HH:mm')}"></div>
+			   </div>
+			 </div>		    
+			 		
+			<!-- 書き込みの内容 -->
+			<div class="card my-3 col-12 p-3">
+			    <div class="card-text" style="white-space: pre-line;" th:text="${content.contentContents}"></div>
+			    <div class="d-flex justify-content-end">
+			        <div class="badge bg-light text-dark text-start">
+			        </div>
+			    </div>
+			    	
+				 <!-- イメージ -->  
+		        <div th:each="boardImage : ${content.images}">
+		           <img th:src="@{/images/{contentId}/{fileName}(contentId=${content.contentId}, fileName=${boardImage.imageFilename})}" class="image-preview">
+		        </div>
+			</div>
+			
+			<!-- イメージ名 -->
+			<div class="card my-3" th:if="${#lists.size(content.images) > 0}">
+			    <div class="card-body">
+			        <div th:each="boardImage : ${content.images}" th:if="${boardImage.imageFilename}">
+			            <p th:text="'ファイル名: ' + ${boardImage.imageFilename}" class="mt-2"></p>
+			        </div>
+			    </div>
+			</div>
+	
+			
+			<div class="d-flex justify-content-end mt-3">
+			    <!-- コンテンツの修正ボタン -->
+		        <form th:action="@{/contentUpdate/{contentId}(contentId=${content.contentId})}" method="get" class="me-2" id="updateForm">
+		            <button type="submit" class="btn btn-primary">
+		                修正
+		            </button>
+		        </form>
+		        
+		        <!-- コンテンツの削除ボタン -->
+		        <form th:action="@{/contentVerify-password}" method="post" class="me-2" id="verifyPasswordForm">
+			        <input type="hidden" name="contentId" th:value="${content.contentId}" />
+			        <input type="hidden" name="contentPasswd" th:value="${content.contentPasswd}" />
+			        <button type="submit" class="btn btn-danger">
+			            削除
+			        </button>
+				</form>
+	    	</div>
+			
+			<!-- コメント表示 -->
+			<h5 class="border-bottom my-3 py-2 font-weight-bold" th:text="コメント">コメント</h5>
+		
+			<!-- コメント詳細 -->
+		    <div class="card my-3" th:each="comment : ${content.comments}">
+			    <div class="card-body d-flex justify-content-between">
+			       
+					<!-- 登録者 -->
+			    	<div class="d-flex flex-column align-items-start" style="flex: 1.5;">
+			    		<div class="badge bg-custom-gray text-dark p-2">
+			             	<div th:text="${comment.commentUser}"></div>
+			            </div>
+			        </div>
+			        <!-- 内容-->
+			        <div style="flex: 7;">
+			            <div class="card-text" style="white-space: pre-line;" th:text="${comment.commentContents}"></div>
+			        </div>
+			        		
+			        <!-- 登録日 -->
+			        <div class="d-flex flex-column align-items-end" style="flex: 1.5;">
+			            <div class="badge bg-custom-gray text-dark p-2">
+			                <div th:text="${#temporals.format(comment.commentAt, 'yyyy-MM-dd HH:mm')}"></div>
+			            </div>
+			        </div>
+			
+			        <!-- 削除ボタン -->
+			        <div class="d-flex flex-column align-items-end" style="flex: 0.6;">
+				        <form th:action="@{/commentVerify-password}" method="post" class="me-2" id="verifyPasswordForm">
+					        <input type="hidden" name="commentId" th:value="${comment.commentId}" />
+					        <input type="hidden" name="commentPasswd" th:value="${comment.commentPasswd}" />
+					        <button type="submit" class="btn btn-danger">
+					            削除
+					        </button>
+						</form>
+			        </div>
+			    </div>
+		    </div>
+			
+			<!-- コメント作成 -->
+			<form th:action="@{/create/{contentId}(contentId=${content.contentId})}" th:object="${formComment}" method="post" class="my-3">
+				
+			    <!-- テキストボックス -->
+			    <div class="mb-3">
+			        <textarea th:field="*{commentContents}" rows="10" class="form-control"></textarea>
+			        <div th:if="${#fields.hasErrors('commentContents')}" class="text-danger">
+			              <div th:each="err : ${#fields.errors('commentContents')}" th:text="${err}"></div>
+			        </div>		        
+			    </div>
+		 
+			    <div class="row mb-3">
+			   		<!-- 登録者 -->
+			        <div class="col-md-2">
+			            <input type="text" id="commentUser" th:field="*{commentUser}" class="form-control mb-2" placeholder="登録者入力">
+			            <div th:if="${#fields.hasErrors('commentUser')}" class="error-message">
+			            	<div th:each="err : ${#fields.errors('commentUser')}" th:text="${err}"></div>
+			        	</div>     
+			        </div>
+			        <!-- パスワード -->
+			        <div class="col-md-2">
+			            <input type="password" th:field="*{commentPasswd}" class="form-control mb-2" placeholder="パスワード入力">
+			        	<div th:if="${#fields.hasErrors('commentPasswd')}" class="error-message">
+			              	<div th:each="err : ${#fields.errors('commentPasswd')}" th:text="${err}"></div>
+			        	</div>		            
+			        </div>
+			        <!-- 登録ボタン -->
+			        <div class="col-md-8 text-end">
+			            <input type="submit" value="コメント登録" class="btn btn-primary" style="background-color: #2A7A4B; border-color: #2A7A4B;">
+			        </div>
+			    </div>		    
+			</form>			
+		</div>
+	</body>
+</html>
