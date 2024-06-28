@@ -67,6 +67,22 @@
 	            padding: 8px 16px;
 	            border-radius: 4px;
 	        }
+	        
+	        .footer {
+	            position: fixed;
+	            bottom: 0;
+	            width: 100%;
+	            text-align: center;
+	            padding: 10px 0;
+	            background-color: #f8f9fa;
+	            border-top: 1px solid #e7e7e7;
+	        }
+	
+	        .footer p {
+	            margin: 0;
+	            color: #555555;
+	            font-size: 14px;
+	        }
 		</style>
 		
 		<title>書き込みリスト</title>
@@ -169,6 +185,12 @@
         		<input type="hidden" id="selected_category" name="category" th:value="${category}">
     		</form>
 		</div>
+		
+		
+	    <!-- Footer -->
+	    <div class="footer">
+	        <p>© 2024</p>
+	    </div>
 		
 		<!-- Script -->	
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
